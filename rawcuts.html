@@ -1,0 +1,1611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAW CUTS — The Art of the Imperfect</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Space+Mono:wght@400;700&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --kraft: #c4a265;
+    --kraft-light: #dbc8a0;
+    --kraft-dark: #8b6914;
+    --ink: #1a1612;
+    --ink-soft: #2e2820;
+    --paper: #f0e6d3;
+    --paper-dark: #e0d1b8;
+    --red-tape: #c0392b;
+    --blue-tape: #5b8fa8;
+    --pencil: #6b6356;
+    --white: #faf6ee;
+    --shadow: rgba(26, 22, 18, 0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'Space Mono', monospace;
+    overflow-x: hidden;
+    cursor: crosshair;
+  }
+
+  /* --- GRAIN OVERLAY --- */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* --- NAV --- */
+  nav {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 100;
+    padding: 20px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(26, 22, 18, 0.85);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(196, 162, 101, 0.15);
+  }
+
+  .nav-logo {
+    font-family: 'Courier Prime', monospace;
+    font-weight: 700;
+    font-size: 1.1rem;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--kraft);
+    text-decoration: none;
+    position: relative;
+  }
+
+  .nav-logo::before {
+    content: '✂';
+    margin-right: 8px;
+    font-size: 1.2rem;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: var(--paper-dark);
+    text-decoration: none;
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: color 0.3s;
+    position: relative;
+  }
+
+  .nav-links a:hover { color: var(--kraft); }
+
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: var(--kraft);
+    transition: width 0.3s;
+  }
+
+  .nav-links a:hover::after { width: 100%; }
+
+  /* --- HERO --- */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 120px 40px 80px;
+    position: relative;
+  }
+
+  .hero-bg-text {
+    position: absolute;
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(8rem, 20vw, 22rem);
+    font-weight: 900;
+    color: rgba(196, 162, 101, 0.04);
+    letter-spacing: -5px;
+    user-select: none;
+    white-space: nowrap;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .hero-tag {
+    font-size: 0.7rem;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: var(--kraft);
+    margin-bottom: 30px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .hero-tag::before, .hero-tag::after {
+    content: '';
+    width: 40px;
+    height: 1px;
+    background: var(--kraft-dark);
+  }
+
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(4rem, 10vw, 9rem);
+    font-weight: 900;
+    line-height: 0.9;
+    letter-spacing: -3px;
+    color: var(--paper);
+    margin-bottom: 10px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.5s;
+    position: relative;
+  }
+
+  .hero-title span {
+    display: block;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 0.4em;
+    letter-spacing: 8px;
+    color: var(--kraft);
+    margin-top: 10px;
+  }
+
+  .hero-sub {
+    font-family: 'Courier Prime', monospace;
+    font-size: 1rem;
+    color: var(--pencil);
+    margin-top: 30px;
+    max-width: 420px;
+    line-height: 1.7;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.7s;
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 50px;
+    margin-top: 50px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.9s;
+  }
+
+  .stat {
+    text-align: center;
+  }
+
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--kraft);
+    display: block;
+  }
+
+  .stat-label {
+    font-size: 0.65rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--pencil);
+    margin-top: 4px;
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 1.2s;
+  }
+
+  .scroll-hint span {
+    font-size: 0.6rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--pencil);
+  }
+
+  .scroll-line {
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, var(--kraft), transparent);
+    animation: scrollPulse 2s ease infinite;
+  }
+
+  /* --- ABOUT --- */
+  .about {
+    padding: 120px 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+
+  .about-visual {
+    position: relative;
+    height: 580px;
+  }
+
+  .paper-card {
+    position: absolute;
+    background: var(--paper);
+    border: 1px solid var(--paper-dark);
+    box-shadow: 4px 6px 20px var(--shadow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+  }
+
+  .paper-card:nth-child(1) {
+    width: 270px; height: 340px;
+    top: 0; left: 10px;
+    transform: rotate(-6deg);
+    animation: floatA 6s ease-in-out infinite;
+  }
+
+  .paper-card:nth-child(2) {
+    width: 250px; height: 310px;
+    top: 60px; right: 0;
+    transform: rotate(4deg);
+    animation: floatB 7s ease-in-out infinite;
+  }
+
+  .paper-card:nth-child(3) {
+    width: 230px; height: 290px;
+    bottom: 20px; left: 90px;
+    transform: rotate(-2deg);
+    animation: floatC 5s ease-in-out infinite;
+  }
+
+  .paper-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    mix-blend-mode: multiply; /* Optional: adds a nice texture effect on the paper */
+    opacity: 0.9;
+  }
+
+  .tape {
+    position: absolute;
+    width: 60px;
+    height: 20px;
+    opacity: 0.7;
+    z-index: 2;
+  }
+
+  .tape-red { background: var(--red-tape); transform: rotate(-15deg); top: -8px; right: 20px; }
+  .tape-blue { background: var(--blue-tape); transform: rotate(10deg); top: -8px; left: 15px; }
+  .tape-kraft { background: var(--kraft); transform: rotate(-5deg); top: -8px; left: 30px; }
+
+  .about-content h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 30px;
+    color: var(--paper);
+  }
+
+  .about-content h2 em {
+    color: var(--kraft);
+    font-style: italic;
+  }
+
+  .about-content p {
+    font-family: 'Courier Prime', monospace;
+    font-size: 0.9rem;
+    line-height: 1.8;
+    color: var(--pencil);
+    margin-bottom: 20px;
+  }
+
+  .about-content .highlight {
+    display: inline;
+    background: linear-gradient(to top, rgba(196, 162, 101, 0.2) 40%, transparent 40%);
+    padding: 0 4px;
+    color: var(--paper);
+  }
+
+  /* --- GALLERY --- */
+  .gallery {
+    padding: 100px 40px;
+    position: relative;
+  }
+
+  .gallery-header {
+    text-align: center;
+    margin-bottom: 60px;
+  }
+
+  .gallery-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    font-weight: 700;
+  }
+
+  .gallery-header p {
+    font-family: 'Courier Prime', monospace;
+    font-size: 0.8rem;
+    color: var(--pencil);
+    margin-top: 10px;
+    letter-spacing: 2px;
+  }
+
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .gallery-item {
+    aspect-ratio: 1;
+    background: var(--ink-soft);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+    border: 1px solid rgba(196, 162, 101, 0.08);
+  }
+
+  .gallery-item:hover {
+    transform: scale(1.05);
+    z-index: 2;
+    border-color: var(--kraft);
+  }
+
+  .gallery-item .item-inner {
+    width: 100%;
+    height: 100%;
+    background: var(--paper);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.4s;
+    overflow: hidden;
+  }
+
+  .gallery-item .item-inner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .gallery-item:hover .item-inner {
+    transform: rotate(0deg) scale(1.02);
+  }
+
+  .gallery-item .item-id {
+    position: absolute;
+    bottom: 8px;
+    right: 10px;
+    font-size: 0.6rem;
+    letter-spacing: 2px;
+    color: var(--pencil);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .gallery-item:hover .item-id { opacity: 1; }
+
+  /* --- MANIFESTO --- */
+  .manifesto {
+    padding: 140px 40px;
+    text-align: center;
+    position: relative;
+    border-top: 1px solid rgba(196, 162, 101, 0.1);
+    border-bottom: 1px solid rgba(196, 162, 101, 0.1);
+  }
+
+  .manifesto-inner {
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .manifesto blockquote {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.5rem, 3vw, 2.5rem);
+    font-weight: 400;
+    font-style: italic;
+    line-height: 1.5;
+    color: var(--paper);
+  }
+
+  .manifesto blockquote em {
+    color: var(--kraft);
+    font-style: normal;
+    font-weight: 700;
+  }
+
+  .manifesto .author {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--pencil);
+    margin-top: 30px;
+    display: block;
+  }
+
+  .scissors-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin: 40px 0;
+    color: var(--pencil);
+    font-size: 0.8rem;
+  }
+
+  .scissors-divider::before, .scissors-divider::after {
+    content: '';
+    width: 120px;
+    height: 0;
+    border-top: 1px dashed var(--pencil);
+    opacity: 0.4;
+  }
+
+  /* --- MINT --- */
+  .mint {
+    padding: 120px 40px;
+    text-align: center;
+  }
+
+  .mint-box {
+    max-width: 560px;
+    margin: 0 auto;
+    background: var(--ink-soft);
+    border: 1px solid rgba(196, 162, 101, 0.15);
+    padding: 60px 50px;
+    position: relative;
+  }
+
+  .mint-box::before {
+    content: 'FREE MINT';
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--red-tape);
+    color: var(--white);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 4px;
+    padding: 4px 20px;
+  }
+
+  .mint-box h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+
+  .mint-box p {
+    font-family: 'Courier Prime', monospace;
+    font-size: 0.85rem;
+    color: var(--pencil);
+    line-height: 1.7;
+    margin-bottom: 30px;
+  }
+
+  .mint-info {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-bottom: 36px;
+    padding-bottom: 36px;
+    border-bottom: 1px dashed rgba(196, 162, 101, 0.2);
+  }
+
+  .mint-info .stat-num { font-size: 1.8rem; }
+
+  .mint-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--kraft);
+    color: var(--ink);
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 16px 48px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .mint-btn:hover {
+    background: var(--kraft-light);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(196, 162, 101, 0.25);
+  }
+
+  .mint-btn::after {
+    content: '→';
+    transition: transform 0.3s;
+  }
+
+  .mint-btn:hover::after {
+    transform: translateX(4px);
+  }
+
+  /* --- WHITELIST --- */
+  .whitelist {
+    padding: 120px 40px;
+    position: relative;
+  }
+
+  .wl-container {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .wl-header {
+    text-align: center;
+    margin-bottom: 50px;
+  }
+
+  .wl-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .wl-header h2 em { color: var(--kraft); font-style: italic; }
+
+  .wl-header .wl-subtitle {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--pencil);
+    margin-bottom: 16px;
+  }
+
+  .wl-status-bar {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(74, 222, 128, 0.06);
+    border: 1px solid rgba(74, 222, 128, 0.15);
+    padding: 8px 20px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #4ade80;
+  }
+
+  .wl-status-bar .pulse-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #4ade80;
+    animation: pulseDot 2s ease infinite;
+    flex-shrink: 0;
+  }
+
+  @keyframes pulseDot {
+    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.4); }
+    50% { opacity: 0.7; box-shadow: 0 0 0 6px rgba(74, 222, 128, 0); }
+  }
+
+  /* --- DISCLAIMER BOX --- */
+  .wl-disclaimer {
+    background: var(--ink-soft);
+    border: 1px solid rgba(196, 162, 101, 0.1);
+    padding: 36px 32px;
+    margin-bottom: 32px;
+    position: relative;
+  }
+
+  .wl-disclaimer::before {
+    content: '⚠️ READ BEFORE APPLYING';
+    position: absolute;
+    top: -12px;
+    left: 24px;
+    background: var(--red-tape);
+    color: var(--white);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    padding: 4px 14px;
+  }
+
+  .disclaimer-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .disclaimer-item {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .disclaimer-item .d-icon {
+    font-size: 1.2rem;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .disclaimer-item p {
+    font-family: 'Courier Prime', monospace;
+    font-size: 0.78rem;
+    color: var(--pencil);
+    line-height: 1.6;
+  }
+
+  .disclaimer-item p strong {
+    color: var(--paper);
+    font-weight: 700;
+  }
+
+  /* --- PROGRESS BAR --- */
+  .wl-progress {
+    background: var(--ink-soft);
+    border: 1px solid rgba(196, 162, 101, 0.1);
+    padding: 20px 32px;
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .wl-progress-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--pencil);
+    white-space: nowrap;
+  }
+
+  .wl-progress-label span {
+    color: var(--kraft);
+    font-weight: 700;
+  }
+
+  .wl-progress-track {
+    flex: 1;
+    height: 6px;
+    background: rgba(196, 162, 101, 0.1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .wl-progress-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--kraft);
+    transition: width 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+  }
+
+  /* --- TASKS --- */
+  .wl-tasks-section {
+    background: var(--ink-soft);
+    border: 1px solid rgba(196, 162, 101, 0.1);
+    padding: 36px 32px;
+    margin-bottom: 32px;
+    position: relative;
+  }
+
+  .wl-tasks-section::before {
+    content: '📋 WHITELIST APPLICATION';
+    position: absolute;
+    top: -12px;
+    left: 24px;
+    background: var(--blue-tape);
+    color: var(--white);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    padding: 4px 14px;
+  }
+
+  .wl-section-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--pencil);
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 1px dashed rgba(196, 162, 101, 0.12);
+  }
+
+  .wl-task {
+    padding: 20px 0;
+    border-bottom: 1px solid rgba(196, 162, 101, 0.06);
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    transition: opacity 0.3s;
+  }
+
+  .wl-task:last-child { border-bottom: none; }
+
+  .wl-task.completed { opacity: 0.55; }
+
+  .task-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--kraft-dark);
+    min-width: 32px;
+    line-height: 1;
+    padding-top: 2px;
+  }
+
+  .task-content { flex: 1; }
+
+  .task-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--paper);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .task-title a {
+    color: var(--kraft);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: color 0.3s;
+  }
+
+  .task-title a:hover { color: var(--kraft-light); }
+
+  .task-desc {
+    font-family: 'Courier Prime', monospace;
+    font-size: 0.75rem;
+    color: var(--pencil);
+    line-height: 1.6;
+    margin-bottom: 10px;
+  }
+
+  .task-input-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-top: 10px;
+  }
+
+  .task-input-row input {
+    flex: 1;
+    background: rgba(26, 22, 18, 0.6);
+    border: 1px solid rgba(196, 162, 101, 0.15);
+    color: var(--paper);
+    font-family: 'Courier Prime', monospace;
+    font-size: 0.85rem;
+    padding: 10px 14px;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+
+  .task-input-row input::placeholder {
+    color: rgba(107, 99, 86, 0.5);
+    font-style: italic;
+  }
+
+  .task-input-row input:focus {
+    border-color: var(--kraft);
+    box-shadow: 0 0 0 3px rgba(196, 162, 101, 0.08);
+  }
+
+  .task-done-btn {
+    background: transparent;
+    border: 1px solid rgba(196, 162, 101, 0.3);
+    color: var(--kraft);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 10px 18px;
+    cursor: pointer;
+    transition: all 0.3s;
+    white-space: nowrap;
+  }
+
+  .task-done-btn:hover {
+    background: var(--kraft);
+    color: var(--ink);
+  }
+
+  .task-done-btn.checked {
+    background: rgba(74, 222, 128, 0.1);
+    border-color: rgba(74, 222, 128, 0.3);
+    color: #4ade80;
+    pointer-events: none;
+  }
+
+  .task-done-btn.checked::before {
+    content: '✓ ';
+  }
+
+  /* --- WALLET SECTION --- */
+  .wl-wallet-section {
+    background: var(--ink-soft);
+    border: 1px solid rgba(196, 162, 101, 0.1);
+    padding: 36px 32px;
+    margin-bottom: 32px;
+    position: relative;
+  }
+
+  .wl-wallet-section::before {
+    content: '💎 EVM WALLET';
+    position: absolute;
+    top: -12px;
+    left: 24px;
+    background: var(--kraft-dark);
+    color: var(--white);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    padding: 4px 14px;
+  }
+
+  .wallet-input-wrap {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .wallet-input-wrap input {
+    flex: 1;
+    background: rgba(26, 22, 18, 0.6);
+    border: 1px solid rgba(196, 162, 101, 0.15);
+    color: var(--paper);
+    font-family: 'Courier Prime', monospace;
+    font-size: 0.9rem;
+    padding: 14px 16px;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+
+  .wallet-input-wrap input::placeholder {
+    color: rgba(107, 99, 86, 0.5);
+    font-style: italic;
+  }
+
+  .wallet-input-wrap input:focus {
+    border-color: var(--kraft);
+    box-shadow: 0 0 0 3px rgba(196, 162, 101, 0.08);
+  }
+
+  .wallet-chain-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--kraft);
+    background: rgba(196, 162, 101, 0.08);
+    border: 1px solid rgba(196, 162, 101, 0.2);
+    padding: 14px 16px;
+    white-space: nowrap;
+  }
+
+  .wallet-warning {
+    font-family: 'Courier Prime', monospace;
+    font-size: 0.72rem;
+    color: var(--pencil);
+    line-height: 1.5;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .wallet-warning span { color: var(--red-tape); }
+
+  /* --- SUBMIT BUTTON --- */
+  .wl-submit-wrap {
+    text-align: center;
+  }
+
+  .wl-submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    background: var(--kraft);
+    color: var(--ink);
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 18px 48px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .wl-submit:hover {
+    background: var(--kraft-light);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(196, 162, 101, 0.3);
+  }
+
+  .wl-submit:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .wl-submit:disabled:hover {
+    background: var(--kraft);
+    transform: none;
+    box-shadow: none;
+  }
+
+  .wl-submit-note {
+    font-family: 'Courier Prime', monospace;
+    font-size: 0.7rem;
+    color: var(--pencil);
+    margin-top: 14px;
+    text-align: center;
+  }
+
+  /* --- SUCCESS MODAL --- */
+  .wl-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(26, 22, 18, 0.88);
+    backdrop-filter: blur(8px);
+    z-index: 200;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+  }
+
+  .wl-modal-overlay.show { display: flex; }
+
+  .wl-modal {
+    background: var(--ink-soft);
+    border: 1px solid rgba(196, 162, 101, 0.2);
+    padding: 60px 48px;
+    text-align: center;
+    max-width: 480px;
+    width: 100%;
+    position: relative;
+    animation: modalIn 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+  }
+
+  @keyframes modalIn {
+    from { opacity: 0; transform: translateY(20px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .wl-modal-icon { font-size: 3.5rem; margin-bottom: 20px; display: block; }
+
+  .wl-modal h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--kraft);
+    margin-bottom: 14px;
+  }
+
+  .wl-modal p {
+    font-family: 'Courier Prime', monospace;
+    font-size: 0.85rem;
+    color: var(--pencil);
+    line-height: 1.7;
+    margin-bottom: 8px;
+  }
+
+  .wl-modal p strong {
+    color: var(--paper);
+  }
+
+  .wl-modal-close {
+    margin-top: 28px;
+    background: transparent;
+    border: 1px solid rgba(196, 162, 101, 0.25);
+    color: var(--kraft);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 12px 32px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .wl-modal-close:hover {
+    background: var(--kraft);
+    color: var(--ink);
+  }
+
+  .input-error {
+    border-color: var(--red-tape) !important;
+    box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.12) !important;
+  }
+
+  @media (max-width: 600px) {
+    .disclaimer-grid { grid-template-columns: 1fr; }
+    .wl-tasks-section, .wl-wallet-section, .wl-disclaimer { padding: 28px 20px; }
+    .wallet-input-wrap { flex-direction: column; }
+    .wallet-chain-tag { text-align: center; }
+    .wl-modal { padding: 44px 28px; }
+  }
+
+  /* --- FOOTER --- */
+  footer {
+    padding: 60px 40px;
+    border-top: 1px solid rgba(196, 162, 101, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .footer-left {
+    font-family: 'Courier Prime', monospace;
+    font-size: 0.75rem;
+    color: var(--pencil);
+    letter-spacing: 1px;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 24px;
+  }
+
+  .footer-links a {
+    color: var(--pencil);
+    text-decoration: none;
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: color 0.3s;
+  }
+
+  .footer-links a:hover { color: var(--kraft); }
+
+  /* --- ANIMATIONS --- */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.4; height: 40px; }
+    50% { opacity: 1; height: 55px; }
+  }
+
+  @keyframes floatA {
+    0%, 100% { transform: rotate(-6deg) translateY(0); }
+    50% { transform: rotate(-4deg) translateY(-15px); }
+  }
+
+  @keyframes floatB {
+    0%, 100% { transform: rotate(4deg) translateY(0); }
+    50% { transform: rotate(6deg) translateY(-12px); }
+  }
+
+  @keyframes floatC {
+    0%, 100% { transform: rotate(-2deg) translateY(0); }
+    50% { transform: rotate(0deg) translateY(-10px); }
+  }
+
+  /* --- SCROLL REVEAL --- */
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* --- RESPONSIVE --- */
+  @media (max-width: 900px) {
+    .about { grid-template-columns: 1fr; gap: 40px; }
+    .about-visual { height: 350px; }
+    .gallery-grid { grid-template-columns: repeat(3, 1fr); }
+    nav { padding: 16px 24px; }
+    .nav-links { gap: 20px; }
+    .hero-stats { gap: 30px; }
+  }
+
+  @media (max-width: 600px) {
+    .about-visual { display: none; }
+    .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+    .nav-links { display: none; }
+    .hero { padding: 100px 24px 80px; }
+    .hero-stats { flex-direction: column; gap: 20px; }
+    .mint-box { padding: 50px 28px; }
+    .mint-info { flex-direction: column; gap: 16px; }
+    footer { flex-direction: column; gap: 20px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">Raw Cuts</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#gallery">Gallery</a></li>
+    <li><a href="#manifesto">Manifesto</a></li>
+    <li><a href="#mint">Mint</a></li>
+    <li><a href="#whitelist">Whitelist</a></li>
+    <li><a href="https://x.com/RawCutsETH" target="_blank">𝕏</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg-text">RAWCUTS</div>
+  <div class="hero-tag">On Ethereum</div>
+  <h1 class="hero-title">
+    RAW CUTS
+    <span>The Art of the Imperfect</span>
+  </h1>
+  <p class="hero-sub">3,333 hand-assembled scraps. Assembled by hand. Bound to the chain. No two are the same.</p>
+  <div class="hero-stats">
+    <div class="stat">
+      <span class="stat-num">3,333</span>
+      <div class="stat-label">Scraps</div>
+    </div>
+    <div class="stat">
+      <span class="stat-num">Free</span>
+      <div class="stat-label">Mint Price</div>
+    </div>
+    <div class="stat">
+      <span class="stat-num">ETH</span>
+      <div class="stat-label">Blockchain</div>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="about-visual reveal">
+    <div class="paper-card">
+      <div class="tape tape-red"></div>
+      <img src="img/sneek (1).png" alt="Raw Cut Sneek">
+    </div>
+    <div class="paper-card">
+      <div class="tape tape-blue"></div>
+      <img src="img/sneek (1).jpg" alt="Raw Cut Sneek">
+    </div>
+    <div class="paper-card">
+      <div class="tape tape-kraft"></div>
+      <img src="img/sneek (2).png" alt="Raw Cut Sneek">
+    </div>
+  </div>
+  <div class="about-content reveal">
+    <h2>Crafted from <em>scraps</em>, not screens.</h2>
+    <p>
+      Each Raw Cut is a <span class="highlight">one-of-a-kind character</span> built by hand from paper, cardboard, tape, and whatever scraps were within reach.
+    </p>
+    <p>
+      No algorithms decided their faces. No AI rendered their armor. Every imperfect crease, every torn edge, every crooked eye — that's the point. 
+    </p>
+    <p>
+      <span class="highlight">Imperfection is the signature.</span> In a world of pixel-perfect generative art, Raw Cuts chooses the rough, the real, the handmade.
+    </p>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section class="gallery" id="gallery">
+  <div class="gallery-header reveal">
+    <h2>The Collection</h2>
+    <p>3,333 unique hand-assembled characters</p>
+  </div>
+  <div class="gallery-grid reveal" id="galleryGrid">
+    <!-- Generated by JS -->
+  </div>
+</section>
+
+<!-- MANIFESTO -->
+<section class="manifesto" id="manifesto">
+  <div class="manifesto-inner reveal">
+    <div class="scissors-divider">✂</div>
+    <blockquote>
+      "In a world obsessed with <em>perfection</em>, we chose the torn edges, the crooked lines, and the beauty that only <em>human hands</em> can make."
+    </blockquote>
+    <span class="author">— The Raw Cuts Manifesto</span>
+    <div class="scissors-divider">✂</div>
+  </div>
+</section>
+
+<!-- MINT -->
+<section class="mint" id="mint">
+  <div class="mint-box reveal">
+    <h2>Claim Your Scrap</h2>
+    <p>Each Raw Cut is a free mint on Ethereum. No hidden costs. Just connect, mint, and own a piece of handmade art forever on-chain.</p>
+    <div class="mint-info">
+      <div class="stat">
+        <span class="stat-num">0 Ξ</span>
+        <div class="stat-label">Price</div>
+      </div>
+      <div class="stat">
+        <span class="stat-num">3,333</span>
+        <div class="stat-label">Supply</div>
+      </div>
+      <div class="stat">
+        <span class="stat-num">1</span>
+        <div class="stat-label">Per Wallet</div>
+      </div>
+    </div>
+    <button class="mint-btn" onclick="alert('Minting is coming soon!')">Soon</button>
+  </div>
+</section>
+
+<!-- WHITELIST -->
+<section class="whitelist" id="whitelist">
+  <div class="wl-container reveal">
+
+    <!-- Header -->
+    <div class="wl-header">
+      <h2>Apply for the <em>Whitelist</em></h2>
+      <div class="wl-subtitle">◆ Whitelist Application ◆</div>
+      <div class="wl-status-bar">
+        <span class="pulse-dot"></span>
+        Applications Live
+      </div>
+    </div>
+
+    <!-- Disclaimer -->
+    <div class="wl-disclaimer">
+      <div class="disclaimer-grid">
+        <div class="disclaimer-item">
+          <span class="d-icon">🎯</span>
+          <p><strong>Applying does not guarantee a spot.</strong> Submission is the first step — not a confirmation.</p>
+        </div>
+        <div class="disclaimer-item">
+          <span class="d-icon">🔍</span>
+          <p><strong>Manual selection only.</strong> The Raw Cuts team will personally review and handpick applicants.</p>
+        </div>
+        <div class="disclaimer-item">
+          <span class="d-icon">✅</span>
+          <p><strong>Complete all tasks</strong> to increase your chances. Incomplete applications will be deprioritized.</p>
+        </div>
+        <div class="disclaimer-item">
+          <span class="d-icon">🔒</span>
+          <p><strong>No burner wallets.</strong> We run on-chain filters and verify wallet history before selecting.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Progress -->
+    <div class="wl-progress">
+      <div class="wl-progress-label"><span id="tasksDone">0</span> / 5 Tasks Completed</div>
+      <div class="wl-progress-track">
+        <div class="wl-progress-fill" id="progressFill"></div>
+      </div>
+    </div>
+
+    <!-- Tasks -->
+    <div class="wl-tasks-section">
+      <div class="wl-section-label">// Complete all tasks</div>
+
+      <!-- Task 1 -->
+      <div class="wl-task" id="task1">
+        <div class="task-num">01</div>
+        <div class="task-content">
+          <div class="task-title">🐦 <a href="https://x.com/intent/follow?screen_name=RawCutsETH" target="_blank">Follow @RawCutsETH</a> on X</div>
+          <div class="task-input-row">
+            <input type="text" id="input1" placeholder="Your X username (@...)">
+            <button class="task-done-btn" onclick="completeTask(1)">Done</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Task 2 -->
+      <div class="wl-task" id="task2">
+        <div class="task-num">02</div>
+        <div class="task-content">
+          <div class="task-title">❤️ <a href="https://x.com/RawCutsETH" target="_blank">Like the pinned post</a> from @RawCutsETH</div>
+          <div class="task-desc">Click the link → the post opens on X → tap the ❤️ heart button to like it.</div>
+          <div class="task-input-row">
+            <button class="task-done-btn" onclick="completeTask(2)">Done</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Task 3 -->
+      <div class="wl-task" id="task3">
+        <div class="task-num">03</div>
+        <div class="task-content">
+          <div class="task-title">🔁 <a href="https://x.com/RawCutsETH" target="_blank">Repost the pinned post</a> from @RawCutsETH</div>
+          <div class="task-desc">Click the link → X opens a repost dialog → click Repost to confirm.</div>
+          <div class="task-input-row">
+            <input type="text" id="input3" placeholder="Paste your repost URL">
+            <button class="task-done-btn" onclick="completeTask(3)">Done</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Task 4 -->
+      <div class="wl-task" id="task4">
+        <div class="task-num">04</div>
+        <div class="task-content">
+          <div class="task-title">💬 <a href="https://x.com/RawCutsETH" target="_blank">Comment & Tag 2 Friends</a> on the post</div>
+          <div class="task-desc">Reply to the pinned post and tag 2 friends. Paste your comment link below.</div>
+          <div class="task-input-row">
+            <input type="text" id="input4" placeholder="Your comment link">
+            <button class="task-done-btn" onclick="completeTask(4)">Done</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Task 5 -->
+      <div class="wl-task" id="task5">
+        <div class="task-num">05</div>
+        <div class="task-content">
+          <div class="task-title">📣 Share Raw Cuts in a Discord or group chat</div>
+          <div class="task-desc">Spread the word in any community. Screenshot not required, but honesty earns respect.</div>
+          <div class="task-input-row">
+            <button class="task-done-btn" onclick="completeTask(5)">Done</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Wallet -->
+    <div class="wl-wallet-section">
+      <div class="wl-section-label">// Must start with 0x</div>
+      <div class="wallet-input-wrap">
+        <input type="text" id="wlWallet" placeholder="Your EVM wallet (0x...)">
+        <div class="wallet-chain-tag">ETH</div>
+      </div>
+      <div class="wallet-warning"><span>⚠</span> EVM wallets only (must start with 0x) · No burner wallets — on-chain filters active.</div>
+    </div>
+
+    <!-- Submit -->
+    <div class="wl-submit-wrap">
+      <button class="wl-submit" id="wlSubmitBtn" disabled onclick="submitWhitelist()">⚡ Submit Application ⚡</button>
+      <div class="wl-submit-note">All fields required · Manual review · EVM wallets only</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- Success Modal -->
+<div class="wl-modal-overlay" id="wlModal">
+  <div class="wl-modal">
+    <span class="wl-modal-icon">📜</span>
+    <h3>Application Submitted!</h3>
+    <p>Your application has been received.<br>The Raw Cuts team will review manually.</p>
+    <p><strong>Follow @RawCutsETH on X for updates.</strong></p>
+    <button class="wl-modal-close" onclick="closeModal()">✕ Close</button>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">© 2026 RAW CUTS — Assembled by hand. Bound to the chain.</div>
+  <div class="footer-links">
+    <a href="https://x.com/RawCutsETH" target="_blank">𝕏 / Twitter</a>
+    <a href="#" target="_blank">Etherscan</a>
+    <a href="#" target="_blank">OpenSea</a>
+  </div>
+</footer>
+
+<script>
+  // --- Gallery item generation ---
+  const images = [
+    'sneek (1).jpg', 'sneek (1).png', 'sneek (2).png',
+    'sneek (11).jpg', 'sneek (12).jpg', 'sneek (13).jpg',
+    'sneek (14).jpg', 'sneek (15).jpg', 'sneek (16).jpg',
+    'sneek (17).jpg', 'sneek (18).jpg', 'sneek (19).jpg'
+  ];
+  const rotations = [-3, -1, 2, -2, 1, 3, -1, 0, 2, -3, 1, -2];
+  const grid = document.getElementById('galleryGrid');
+
+  images.forEach((img, i) => {
+    const item = document.createElement('div');
+    item.className = 'gallery-item';
+    const rot = rotations[i % rotations.length];
+    item.innerHTML = `
+      <div class="item-inner" style="transform: rotate(${rot}deg);">
+        <img src="img/${img}" alt="Raw Cut Preview" loading="lazy">
+      </div>
+      <span class="item-id">#${String(Math.floor(Math.random() * 3333) + 1).padStart(4, '0')}</span>
+    `;
+    grid.appendChild(item);
+  });
+
+  // --- Scroll reveal ---
+  const revealEls = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.15 });
+
+  revealEls.forEach(el => observer.observe(el));
+
+  // --- Whitelist Task System ---
+  const tasksCompleted = { 1: false, 2: false, 3: false, 4: false, 5: false };
+  const totalTasks = 5;
+
+  function updateProgress() {
+    const done = Object.values(tasksCompleted).filter(Boolean).length;
+    document.getElementById('tasksDone').textContent = done;
+    document.getElementById('progressFill').style.width = (done / totalTasks * 100) + '%';
+
+    // Enable submit only when all tasks + wallet filled
+    const wallet = document.getElementById('wlWallet').value.trim();
+    const allDone = done === totalTasks && /^0x[a-fA-F0-9]{40}$/.test(wallet);
+    document.getElementById('wlSubmitBtn').disabled = !allDone;
+  }
+
+  function completeTask(num) {
+    const task = document.getElementById('task' + num);
+    const btn = task.querySelector('.task-done-btn');
+    const input = task.querySelector('input');
+
+    // If task has input, check it's filled and valid
+    if (input) {
+      const val = input.value.trim();
+      let isValid = true;
+
+      if (!val) {
+        isValid = false;
+      } else if (num === 3 || num === 4) {
+        // Must be a valid X or Twitter link
+        if (!val.toLowerCase().includes('x.com/') && !val.toLowerCase().includes('twitter.com/')) {
+          isValid = false;
+          alert('Please enter a valid X (Twitter) link containing x.com or twitter.com');
+        }
+      }
+
+      if (!isValid) {
+        input.classList.add('input-error');
+        input.focus();
+        setTimeout(() => input.classList.remove('input-error'), 2000);
+        return;
+      }
+    }
+
+    tasksCompleted[num] = true;
+    btn.classList.add('checked');
+    btn.textContent = 'Done';
+    task.classList.add('completed');
+    if (input) input.disabled = true;
+    updateProgress();
+  }
+
+  // Listen to wallet input for real-time submit enable
+  document.getElementById('wlWallet').addEventListener('input', updateProgress);
+
+  async function submitWhitelist() {
+    const submitBtn = document.getElementById('wlSubmitBtn');
+    const wallet = document.getElementById('wlWallet').value.trim();
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbxr_cBcAFKvDOjx3ZwCF_rgVZfFsEL14LrKpF0X6NtYzryq8ceSK9Fzt99HHclFJnU_lA/exec';
+    
+    // Final verification
+    if (!/^0x[a-fA-F0-9]{40}$/.test(wallet)) {
+      const walletInput = document.getElementById('wlWallet');
+      walletInput.classList.add('input-error');
+      walletInput.focus();
+      setTimeout(() => walletInput.classList.remove('input-error'), 2000);
+      return;
+    }
+
+    const allDone = Object.values(tasksCompleted).every(Boolean);
+    if (!allDone) return;
+
+    // UI Feedback: Loading state
+    const originalText = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.textContent = '📑 Submitting Data...';
+
+    const formData = new FormData();
+    formData.append('username', document.getElementById('input1').value.trim());
+    formData.append('repost_link', document.getElementById('input3').value.trim());
+    formData.append('comment_link', document.getElementById('input4').value.trim());
+    formData.append('wallet', wallet);
+    formData.append('timestamp', new Date().toLocaleString());
+    formData.append('source', 'Raw Cuts Website - Direct Sheet Link');
+
+    try {
+      // Use no-cors if the Apps Script is not returning specific headers, 
+      // but usually fetch works fine for standard doPost(e) triggers.
+      const response = await fetch(scriptURL, {
+        method: 'POST',
+        body: formData,
+        mode: 'no-cors' // Using no-cors as Google Scripts often have redirect/header quirks
+      });
+
+      // With no-cors, we can't read response.ok but we can assume it was sent
+      document.getElementById('wlModal').classList.add('show');
+      document.body.style.overflow = 'hidden';
+      submitBtn.textContent = originalText;
+      submitBtn.disabled = false;
+    } catch (error) {
+      console.error('Submission error:', error);
+      alert('Network issue. Please try again or check your connection.');
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalText;
+    }
+  }
+
+  function closeModal() {
+    document.getElementById('wlModal').classList.remove('show');
+    document.body.style.overflow = '';
+  }
+
+  // Close modal on overlay click
+  document.getElementById('wlModal').addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) closeModal();
+  });
+
+</script>
+
+</body>
+</html>
