@@ -1570,7 +1570,7 @@
     formData.append('repost_link', document.getElementById('input3').value.trim());
     formData.append('comment_link', document.getElementById('input4').value.trim());
     formData.append('wallet', wallet);
-    formData.append('timestamp', new Date().toLocaleString());
+    formData.append('timestamp', new Date().toLocaleString('en-US'));
     formData.append('source', 'Raw Cuts Website - Direct Sheet Link');
 
     try {
