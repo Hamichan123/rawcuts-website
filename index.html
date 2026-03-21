@@ -1565,20 +1565,21 @@
     submitBtn.disabled = true;
     submitBtn.textContent = '📑 Submitting Data...';
 
-    const formData = new FormData();
-    formData.append('username', document.getElementById('input1').value.trim());
-    formData.append('repost_link', document.getElementById('input3').value.trim());
-    formData.append('comment_link', document.getElementById('input4').value.trim());
-    formData.append('wallet', wallet);
-    formData.append('timestamp', new Date().toLocaleString('en-US'));
-    formData.append('source', 'Raw Cuts Website - Direct Sheet Link');
+    const urlParams = new URLSearchParams();
+    urlParams.append('username', document.getElementById('input1').value.trim());
+    urlParams.append('repost_link', document.getElementById('input3').value.trim());
+    urlParams.append('comment_link', document.getElementById('input4').value.trim());
+    urlParams.append('wallet', wallet);
+    urlParams.append('timestamp', new Date().toLocaleString('en-US'));
+    urlParams.append('source', 'Raw Cuts Website');
 
     try {
       // Use no-cors if the Apps Script is not returning specific headers, 
       // but usually fetch works fine for standard doPost(e) triggers.
       const response = await fetch(scriptURL, {
         method: 'POST',
-        body: formData,
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: urlParams.toString(),
         mode: 'no-cors' // Using no-cors as Google Scripts often have redirect/header quirks
       });
 
