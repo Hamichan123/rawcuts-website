@@ -1543,12 +1543,20 @@
   // Listen to wallet input for real-time submit enable
   document.getElementById('wlWallet').addEventListener('input', updateProgress);
 
+  let hasSubmitted = false; // Prevent duplicate submissions
+
   async function submitWhitelist() {
+    // Block duplicate submissions
+    if (hasSubmitted) {
+      alert('You have already submitted your application!');
+      return;
+    }
+
     const submitBtn = document.getElementById('wlSubmitBtn');
     const wallet = document.getElementById('wlWallet').value.trim();
     const scriptURL = 'https://script.google.com/macros/s/AKfycbxr_cBcAFKvDOjx3ZwCF_rgVZfFsEL14LrKpF0X6NtYzryq8ceSK9Fzt99HHclFJnU_lA/exec';
     
-    // Final verification
+    // Final wallet verification
     if (!/^0x[a-fA-F0-9]{40}$/.test(wallet)) {
       const walletInput = document.getElementById('wlWallet');
       walletInput.classList.add('input-error');
@@ -1557,36 +1565,68 @@
       return;
     }
 
+    // Verify all tasks are completed
     const allDone = Object.values(tasksCompleted).every(Boolean);
     if (!allDone) return;
+
+    // Get all field values
+    const username = document.getElementById('input1').value.trim();
+    const repostLink = document.getElementById('input3').value.trim();
+    const commentLink = document.getElementById('input4').value.trim();
+
+    // Validate all required fields have actual content (not empty, not "N/A")
+    if (!username || username.toLowerCase() === 'n/a') {
+      alert('Please enter your X username.');
+      return;
+    }
+    if (!repostLink || repostLink.toLowerCase() === 'n/a') {
+      alert('Please enter your repost link.');
+      return;
+    }
+    if (!commentLink || commentLink.toLowerCase() === 'n/a') {
+      alert('Please enter your comment link.');
+      return;
+    }
+
+    // Validate links are actual X/Twitter URLs
+    if (!repostLink.toLowerCase().includes('x.com/') && !repostLink.toLowerCase().includes('twitter.com/')) {
+      alert('Please enter a valid X (Twitter) repost link.');
+      return;
+    }
+    if (!commentLink.toLowerCase().includes('x.com/') && !commentLink.toLowerCase().includes('twitter.com/')) {
+      alert('Please enter a valid X (Twitter) comment link.');
+      return;
+    }
 
     // UI Feedback: Loading state
     const originalText = submitBtn.textContent;
     submitBtn.disabled = true;
     submitBtn.textContent = '📑 Submitting Data...';
 
-    const payload = {
-      username: document.getElementById('input1').value.trim(),
-      repost_link: document.getElementById('input3').value.trim(),
-      comment_link: document.getElementById('input4').value.trim(),
-      wallet: wallet,
-      timestamp: new Date().toLocaleString('en-US'),
-      source: 'Raw Cuts Website'
-    };
+    // Use form-encoded data (reliable with Google Apps Script e.parameter)
+    const formData = new URLSearchParams();
+    formData.append('username', username);
+    formData.append('repost_link', repostLink);
+    formData.append('comment_link', commentLink);
+    formData.append('wallet', wallet);
+    formData.append('timestamp', new Date().toLocaleString('en-US'));
+    formData.append('source', 'Raw Cuts Website');
 
     try {
       const response = await fetch(scriptURL, {
         method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify(payload),
+        body: formData,
         mode: 'no-cors'
       });
 
-      // With no-cors, we can't read response.ok but we can assume it was sent
+      // Mark as submitted to prevent duplicates
+      hasSubmitted = true;
+
+      // Show success modal
       document.getElementById('wlModal').classList.add('show');
       document.body.style.overflow = 'hidden';
-      submitBtn.textContent = originalText;
-      submitBtn.disabled = false;
+      submitBtn.textContent = '✓ SUBMITTED';
+      submitBtn.disabled = true;
     } catch (error) {
       console.error('Submission error:', error);
       alert('Network issue. Please try again or check your connection.');
