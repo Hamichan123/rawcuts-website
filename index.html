@@ -609,28 +609,76 @@
     display: inline-flex;
     align-items: center;
     gap: 10px;
-    background: rgba(74, 222, 128, 0.06);
-    border: 1px solid rgba(74, 222, 128, 0.15);
+    background: rgba(192, 57, 43, 0.08);
+    border: 1px solid rgba(192, 57, 43, 0.25);
     padding: 8px 20px;
     font-family: 'Space Mono', monospace;
     font-size: 0.7rem;
     letter-spacing: 2px;
     text-transform: uppercase;
-    color: #4ade80;
+    color: var(--red-tape);
   }
 
   .wl-status-bar .pulse-dot {
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: #4ade80;
-    animation: pulseDot 2s ease infinite;
+    background: var(--red-tape);
     flex-shrink: 0;
   }
 
-  @keyframes pulseDot {
-    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.4); }
-    50% { opacity: 0.7; box-shadow: 0 0 0 6px rgba(74, 222, 128, 0); }
+  .wl-closed-message {
+    background: var(--ink-soft);
+    border: 1px solid rgba(196, 162, 101, 0.12);
+    padding: 60px 40px;
+    text-align: center;
+    margin-top: 10px;
+  }
+
+  .wl-closed-message .closed-icon {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 20px;
+  }
+
+  .wl-closed-message h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--paper);
+    margin-bottom: 14px;
+  }
+
+  .wl-closed-message p {
+    font-family: 'Courier Prime', monospace;
+    font-size: 0.85rem;
+    color: var(--pencil);
+    line-height: 1.7;
+    max-width: 480px;
+    margin: 0 auto 20px;
+  }
+
+  .wl-closed-message .follow-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: transparent;
+    border: 1px solid rgba(196, 162, 101, 0.3);
+    color: var(--kraft);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 14px 32px;
+    transition: all 0.3s;
+    margin-top: 10px;
+  }
+
+  .wl-closed-message .follow-btn:hover {
+    background: var(--kraft);
+    color: var(--ink);
   }
 
   /* --- DISCLAIMER BOX --- */
@@ -1308,140 +1356,25 @@
 
     <!-- Header -->
     <div class="wl-header">
-      <h2>Apply for the <em>Whitelist</em></h2>
+      <h2>The <em>Whitelist</em></h2>
       <div class="wl-subtitle">◆ Whitelist Application ◆</div>
       <div class="wl-status-bar">
         <span class="pulse-dot"></span>
-        Applications Live
+        Applications Closed
       </div>
     </div>
 
-    <!-- Disclaimer -->
-    <div class="wl-disclaimer">
-      <div class="disclaimer-grid">
-        <div class="disclaimer-item">
-          <span class="d-icon">🎯</span>
-          <p><strong>Applying does not guarantee a spot.</strong> Submission is the first step — not a confirmation.</p>
-        </div>
-        <div class="disclaimer-item">
-          <span class="d-icon">🔍</span>
-          <p><strong>Manual selection only.</strong> The Raw Cuts team will personally review and handpick applicants.</p>
-        </div>
-        <div class="disclaimer-item">
-          <span class="d-icon">✅</span>
-          <p><strong>Complete all tasks</strong> to increase your chances. Incomplete applications will be deprioritized.</p>
-        </div>
-        <div class="disclaimer-item">
-          <span class="d-icon">🔒</span>
-          <p><strong>No burner wallets.</strong> We run on-chain filters and verify wallet history before selecting.</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Progress -->
-    <div class="wl-progress">
-      <div class="wl-progress-label"><span id="tasksDone">0</span> / 5 Tasks Completed</div>
-      <div class="wl-progress-track">
-        <div class="wl-progress-fill" id="progressFill"></div>
-      </div>
-    </div>
-
-    <!-- Tasks -->
-    <div class="wl-tasks-section">
-      <div class="wl-section-label">// Complete all tasks</div>
-
-      <!-- Task 1 -->
-      <div class="wl-task" id="task1">
-        <div class="task-num">01</div>
-        <div class="task-content">
-          <div class="task-title">🐦 <a href="https://x.com/intent/follow?screen_name=RawCutsETH" target="_blank">Follow @RawCutsETH</a> on X</div>
-          <div class="task-input-row">
-            <input type="text" id="input1" placeholder="Your X username (@...)">
-            <button class="task-done-btn" onclick="completeTask(1)">Done</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Task 2 -->
-      <div class="wl-task" id="task2">
-        <div class="task-num">02</div>
-        <div class="task-content">
-          <div class="task-title">❤️ <a href="https://x.com/RawCutsETH/status/2035385659238592632?s=20" target="_blank">Like the post</a> from @RawCutsETH</div>
-          <div class="task-desc">Click the link → the post opens on X → tap the ❤️ heart button to like it.</div>
-          <div class="task-input-row">
-            <button class="task-done-btn" onclick="completeTask(2)">Done</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Task 3 -->
-      <div class="wl-task" id="task3">
-        <div class="task-num">03</div>
-        <div class="task-content">
-          <div class="task-title">🔁 <a href="https://x.com/RawCutsETH/status/2035385659238592632?s=20" target="_blank">Repost the post</a> from @RawCutsETH</div>
-          <div class="task-desc">Click the link → X opens a repost dialog → click Repost to confirm.</div>
-          <div class="task-input-row">
-            <input type="text" id="input3" placeholder="Paste your repost URL">
-            <button class="task-done-btn" onclick="completeTask(3)">Done</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Task 4 -->
-      <div class="wl-task" id="task4">
-        <div class="task-num">04</div>
-        <div class="task-content">
-          <div class="task-title">💬 <a href="https://x.com/RawCutsETH/status/2035385659238592632?s=20" target="_blank">Comment & Tag 2 Friends</a> on the post</div>
-          <div class="task-desc">Reply to the post and tag 2 friends. Paste your comment link below.</div>
-          <div class="task-input-row">
-            <input type="text" id="input4" placeholder="Your comment link">
-            <button class="task-done-btn" onclick="completeTask(4)">Done</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Task 5 -->
-      <div class="wl-task" id="task5">
-        <div class="task-num">05</div>
-        <div class="task-content">
-          <div class="task-title">📣 Share Raw Cuts in a Discord or group chat</div>
-          <div class="task-desc">Spread the word in any community. Screenshot not required, but honesty earns respect.</div>
-          <div class="task-input-row">
-            <button class="task-done-btn" onclick="completeTask(5)">Done</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Wallet -->
-    <div class="wl-wallet-section">
-      <div class="wl-section-label">// Must start with 0x</div>
-      <div class="wallet-input-wrap">
-        <input type="text" id="wlWallet" placeholder="Your EVM wallet (0x...)">
-        <div class="wallet-chain-tag">ETH</div>
-      </div>
-      <div class="wallet-warning"><span>⚠</span> EVM wallets only (must start with 0x) · No burner wallets — on-chain filters active.</div>
-    </div>
-
-    <!-- Submit -->
-    <div class="wl-submit-wrap">
-      <button class="wl-submit" id="wlSubmitBtn" disabled onclick="submitWhitelist()">⚡ Submit Application ⚡</button>
-      <div class="wl-submit-note">All fields required · Manual review · EVM wallets only</div>
+    <!-- Closed Message -->
+    <div class="wl-closed-message">
+      <span class="closed-icon">🔒</span>
+      <h3>Applications Are Now Closed</h3>
+      <p>The whitelist application window has ended. All submissions are currently under review by the Raw Cuts team.</p>
+      <p>Follow us on X for announcements on mint dates and whitelist results.</p>
+      <a href="https://x.com/RawCutsETH" target="_blank" class="follow-btn">Follow @RawCutsETH →</a>
     </div>
 
   </div>
 </section>
-
-<!-- Success Modal -->
-<div class="wl-modal-overlay" id="wlModal">
-  <div class="wl-modal">
-    <span class="wl-modal-icon">📜</span>
-    <h3>Application Submitted!</h3>
-    <p>Your application has been received.<br>The Raw Cuts team will review manually.</p>
-    <p><strong>Follow @RawCutsETH on X for updates.</strong></p>
-    <button class="wl-modal-close" onclick="closeModal()">✕ Close</button>
-  </div>
-</div>
 
 <!-- FOOTER -->
 <footer>
@@ -1489,161 +1422,7 @@
 
   revealEls.forEach(el => observer.observe(el));
 
-  // --- Whitelist Task System ---
-  const tasksCompleted = { 1: false, 2: false, 3: false, 4: false, 5: false };
-  const totalTasks = 5;
-
-  function updateProgress() {
-    const done = Object.values(tasksCompleted).filter(Boolean).length;
-    document.getElementById('tasksDone').textContent = done;
-    document.getElementById('progressFill').style.width = (done / totalTasks * 100) + '%';
-
-    // Enable submit only when all tasks + wallet filled
-    const wallet = document.getElementById('wlWallet').value.trim();
-    const allDone = done === totalTasks && /^0x[a-fA-F0-9]{40}$/.test(wallet);
-    document.getElementById('wlSubmitBtn').disabled = !allDone;
-  }
-
-  function completeTask(num) {
-    const task = document.getElementById('task' + num);
-    const btn = task.querySelector('.task-done-btn');
-    const input = task.querySelector('input');
-
-    // If task has input, check it's filled and valid
-    if (input) {
-      const val = input.value.trim();
-      let isValid = true;
-
-      if (!val) {
-        isValid = false;
-      } else if (num === 3 || num === 4) {
-        // Must be a valid X or Twitter link
-        if (!val.toLowerCase().includes('x.com/') && !val.toLowerCase().includes('twitter.com/')) {
-          isValid = false;
-          alert('Please enter a valid X (Twitter) link containing x.com or twitter.com');
-        }
-      }
-
-      if (!isValid) {
-        input.classList.add('input-error');
-        input.focus();
-        setTimeout(() => input.classList.remove('input-error'), 2000);
-        return;
-      }
-    }
-
-    tasksCompleted[num] = true;
-    btn.classList.add('checked');
-    btn.textContent = 'Done';
-    task.classList.add('completed');
-    if (input) input.disabled = true;
-    updateProgress();
-  }
-
-  // Listen to wallet input for real-time submit enable
-  document.getElementById('wlWallet').addEventListener('input', updateProgress);
-
-  let hasSubmitted = false; // Prevent duplicate submissions
-
-  async function submitWhitelist() {
-    // Block duplicate submissions
-    if (hasSubmitted) {
-      alert('You have already submitted your application!');
-      return;
-    }
-
-    const submitBtn = document.getElementById('wlSubmitBtn');
-    const wallet = document.getElementById('wlWallet').value.trim();
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbxr_cBcAFKvDOjx3ZwCF_rgVZfFsEL14LrKpF0X6NtYzryq8ceSK9Fzt99HHclFJnU_lA/exec';
-    
-    // Final wallet verification
-    if (!/^0x[a-fA-F0-9]{40}$/.test(wallet)) {
-      const walletInput = document.getElementById('wlWallet');
-      walletInput.classList.add('input-error');
-      walletInput.focus();
-      setTimeout(() => walletInput.classList.remove('input-error'), 2000);
-      return;
-    }
-
-    // Verify all tasks are completed
-    const allDone = Object.values(tasksCompleted).every(Boolean);
-    if (!allDone) return;
-
-    // Get all field values
-    const username = document.getElementById('input1').value.trim();
-    const repostLink = document.getElementById('input3').value.trim();
-    const commentLink = document.getElementById('input4').value.trim();
-
-    // Validate all required fields have actual content (not empty, not "N/A")
-    if (!username || username.toLowerCase() === 'n/a') {
-      alert('Please enter your X username.');
-      return;
-    }
-    if (!repostLink || repostLink.toLowerCase() === 'n/a') {
-      alert('Please enter your repost link.');
-      return;
-    }
-    if (!commentLink || commentLink.toLowerCase() === 'n/a') {
-      alert('Please enter your comment link.');
-      return;
-    }
-
-    // Validate links are actual X/Twitter URLs
-    if (!repostLink.toLowerCase().includes('x.com/') && !repostLink.toLowerCase().includes('twitter.com/')) {
-      alert('Please enter a valid X (Twitter) repost link.');
-      return;
-    }
-    if (!commentLink.toLowerCase().includes('x.com/') && !commentLink.toLowerCase().includes('twitter.com/')) {
-      alert('Please enter a valid X (Twitter) comment link.');
-      return;
-    }
-
-    // UI Feedback: Loading state
-    const originalText = submitBtn.textContent;
-    submitBtn.disabled = true;
-    submitBtn.textContent = '📑 Submitting Data...';
-
-    // Use form-encoded data (reliable with Google Apps Script e.parameter)
-    const formData = new URLSearchParams();
-    formData.append('username', username);
-    formData.append('repost_link', repostLink);
-    formData.append('comment_link', commentLink);
-    formData.append('wallet', wallet);
-    formData.append('timestamp', new Date().toLocaleString('en-US'));
-    formData.append('source', 'Raw Cuts Website');
-
-    try {
-      const response = await fetch(scriptURL, {
-        method: 'POST',
-        body: formData,
-        mode: 'no-cors'
-      });
-
-      // Mark as submitted to prevent duplicates
-      hasSubmitted = true;
-
-      // Show success modal
-      document.getElementById('wlModal').classList.add('show');
-      document.body.style.overflow = 'hidden';
-      submitBtn.textContent = '✓ SUBMITTED';
-      submitBtn.disabled = true;
-    } catch (error) {
-      console.error('Submission error:', error);
-      alert('Network issue. Please try again or check your connection.');
-      submitBtn.disabled = false;
-      submitBtn.textContent = originalText;
-    }
-  }
-
-  function closeModal() {
-    document.getElementById('wlModal').classList.remove('show');
-    document.body.style.overflow = '';
-  }
-
-  // Close modal on overlay click
-  document.getElementById('wlModal').addEventListener('click', (e) => {
-    if (e.target === e.currentTarget) closeModal();
-  });
+  // --- Whitelist applications closed ---
 
 </script>
 
